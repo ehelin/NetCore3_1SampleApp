@@ -1,0 +1,9 @@
+﻿#!/bin/bash
+yum update -y
+yum install git -y
+amazon-linux-extras install docker -y
+service docker start
+cd home/ec2-user
+git clone https://github.com/ehelin/NetCore3_1SampleApp.git
+cd NetCore3_1SampleApp
+docker build . -t myawesomerepository
