@@ -28,7 +28,7 @@ exports.handler = async (event) => {
     var instanceParams = {
        ImageId: 'ami-09558250a3419e7d0',
        InstanceType: 't2.micro',
-       KeyName: 'NetCore3_1SampleApp',
+       KeyName: 'NetCore3_1KeyPairV2',
        UserData: userDataEncoded,
 	   SecurityGroupIds: ['sg-0f2d4961192b272f3'],
        MinCount: 1,
