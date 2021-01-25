@@ -14,7 +14,7 @@ async function RunCommand(command) {
   
 	  ssh.exec(command, {
 		exit: function() {
-			output += "\nsuccessfully exited!";
+		  output += "\nsuccessfully exited!";
 		  resolve(output);
 		},
 		out: function(stdout) {
@@ -24,14 +24,14 @@ async function RunCommand(command) {
 		success: function() {
 		  console.log('success output - ' + output);
 		},		
-        out: function() {
-			console.log.bind(console);
+        	out: function() {
+		  console.log.bind(console);
 		},
 		fail: function(e) {
 		  console.log('Fail - ' + e);
 		},
 		err: function(stderr) {
-			console.log('Error - ' + stderr); 
+		  console.log('Error - ' + stderr); 
 		},
 		exit: function(code) {
 			console.log('Exit code ' + code); 
