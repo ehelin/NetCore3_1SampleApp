@@ -8,6 +8,8 @@ These items are also related to this project.
 Blog Post(s):
 <ul>
 	<li><a href="https://erichelin.wordpress.com/2020/10/05/tgimba-going-aws-native-part-1-simple-net-core-3-1-app-running-in-aws-cloud/">Part 1 - Simple .NET Core 3.1 Application in cloud</a></li>
+	<li><a href="https://erichelin.wordpress.com/2020/10/22/tgimba-going-aws-native-part-2-dockerfied-simple-net-core-3-1-app-running-in-aws-cloud/">Part 2 – ‘Dockerfied’ Simple .NET Core 3.1 App Running in AWS Cloud</a></li>
+	<li><a href="https://erichelin.wordpress.com/2020/12/13/tgimba-going-aws-native-part-2-dockerfied-simple-net-core-3-1-app-running-in-aws-cloud-2/">Part 3 – Updated DockFile w/Code Pipeline</a></li>
 </ul>
 
 ## How To Use
