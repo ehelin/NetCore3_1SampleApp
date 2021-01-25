@@ -12,8 +12,6 @@ var ssh = new SSH({
 });
 
 async function RunCommand(command) {
-	console.log('Start RunCommand(command) - command: ' + command);	
-
 	return new Promise(function(resolve, reject) {  
 	  let ourout = "";
   
@@ -23,15 +21,23 @@ async function RunCommand(command) {
 		  resolve(ourout);
 		},
 		out: function(stdout) {
-		  ourout += stdout;
+		  console.log('output - ' + stdout);
 		}
 	  }).start({
 		success: function() {
-		  console.log("successful connection! command - " + command);
+		  console.log('success output - ' + ourout);
+		},		
+        	out: function() {
+		  console.log.bind(console);
 		},
 		fail: function(e) {
-		  console.log("failed connection! command - " + command);
-		  console.log(e);
+		  console.log('Fail - ' + e);
+		},
+		err: function(stderr) {
+		  console.log('Error - ' + stderr); 
+		},
+		exit: function(code) {
+		  console.log('Exit code ' + code); 
 		}
 	  });  
 	});
@@ -41,16 +47,20 @@ exports.handler = async function(event, context, callback) {
 	console.log('Start exports.handler()');	
   
 	let commands = [
+		//1
 		'sudo yum update -y',
 		'sudo yum install git -y',
 		'sudo amazon-linux-extras install docker -y',
 		'sudo service docker start',
-		'cd home/ec2-user',
 		'git clone https://github.com/ehelin/NetCore3_1SampleApp.git',
-		'cd NetCore3_1SampleApp',
-		'sudo docker build . -t myawesomerepository',
-		'sudo docker run -it -p 80:80 myawesomerepository'
+
+		//2
+		'cd NetCore3_1SampleApp; sudo docker build . -t myawesomerepository',
+		
+		//3
+		'cd NetCore3_1SampleApp; sudo docker run -it -p 80:80 myawesomerepository',
 	];
+
 	let res = null;
 	for(let i=0; i<commands.length;i++){
 		res = await RunCommand(commands[i]);
@@ -58,9 +68,8 @@ exports.handler = async function(event, context, callback) {
 
 	console.log('exports.handler() done');
   
-	const response = {
+	return {
 	  statusCode: 200,
 	  body: res,
 	};
-	return response;
 };
