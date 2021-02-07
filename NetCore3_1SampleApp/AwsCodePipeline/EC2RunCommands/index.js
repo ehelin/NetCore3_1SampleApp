@@ -4,12 +4,14 @@ var AWS = require('aws-sdk')
 var codepipeline = new AWS.CodePipeline();
 
 async function RunCommand(command, awsHost) {	
-	var ssh = new SSH({
+	console.log('Setting ssh params');
+	var sshJson = {
 		host: awsHost,
 		user: 'ec2-user',
 		key: fs.readFileSync('NetCore3_1KeyPairV2.pem'),
 		timeout: 120000
-	});
+	};
+	var ssh = new SSH(sshJson);	
 
 	return new Promise(function(resolve, reject) {  
 	  let output = "";
@@ -26,7 +28,7 @@ async function RunCommand(command, awsHost) {
 		success: function() {
 		  console.log('success output - ' + output);
 		},		
-        out: function() {
+        	out: function() {
 			console.log.bind(console);
 		},
 		fail: function(e) {
@@ -42,8 +44,7 @@ async function RunCommand(command, awsHost) {
 	});
 }
 
-async function RunCommands(awsHost, params)
-{
+async function RunCommands(awsHost, params) {
 	console.log('RunCommands(awsHost): ' + awsHost);
 
 	try 
@@ -62,8 +63,7 @@ async function RunCommands(awsHost, params)
 			'cd NetCore3_1SampleApp; sudo docker build . -t myawesomerepository'
 		];
 		for(let i=0; i<commands.length;i++){			
-			console.log('commands: ' + commands[i]);
-			//await RunCommand(commands[i], awsHost);
+			await RunCommand(commands[i], awsHost);
 		}
 		
 		console.log('RunCommands(awsHost) done');
@@ -78,25 +78,27 @@ async function RunCommands(awsHost, params)
 	}
 }
 
+async function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 exports.handler = async function(event, context, callback) {
-	var awsHost = null;
 	console.log('exports.handler() starting...');
 
-	console.log(JSON.stringify(event, null, 2))
-	var jobId = event["CodePipeline.job"].id
+	// give ec2 instance time to spin up...w/o this delay, the ssh connection is refused
+	await timeout(120000);
 
-    	console.log("Set region...");
+	var jobId = event["CodePipeline.job"].id
+	var awsHost = '';
 	AWS.config.update({region: 'us-east-2'});
 	
-	var params = { jobId: jobId };
+	var params = { jobId: jobId	};
 	
-	console.log("Create for describe_instances()");
 	var describeInstanceParams = { };
 	var instanceDescribePromise = new AWS.EC2({apiVersion: '2016-11-15'}).describeInstances(describeInstanceParams).promise();
 
 	return instanceDescribePromise.then(
 		function(data) {
-		console.log("Call back of describe_instances()");
 		console.log(JSON.stringify(data, null, 2));
 
 		console.log("Looking for public id...");
